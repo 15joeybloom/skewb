@@ -1,6 +1,4 @@
 use std;
-use std::collections::HashMap;
-use std::hash::Hash;
 
 pub type Corner = (u8, u8, u8);
 
@@ -74,29 +72,12 @@ pub enum Center {
     F,
     B,
 }
-impl Center {
-    pub fn centers_for_corner(c: &Corner) -> [Center; 3] {
-        [
-            if c.2 == 0 { Center::B } else { Center::F },
-            if c.1 == 0 { Center::L } else { Center::R },
-            if c.0 == 0 { Center::U } else { Center::D },
-        ]
-    }
-}
 
 #[derive(Debug)]
 pub struct Skewb {
     corner_pieces: [usize; 8],
     corner_orientations: [Orientation; 8],
-    center_pieces: HashMap<Center, Color>,
-}
-
-macro_rules! hashmap {
-    ($( $key: expr => $val: expr ),+ $(,)*) => {{
-         let mut map = ::std::collections::HashMap::new();
-         $( map.insert($key, $val); )+
-         map
-    }}
+    center_pieces: [Color; 6],
 }
 
 impl Skewb {
@@ -104,14 +85,7 @@ impl Skewb {
         Skewb {
             corner_pieces: [0, 1, 2, 3, 4, 5, 6, 7],
             corner_orientations: [Orientation::UD; 8],
-            center_pieces: hashmap![
-                Center::U => Color::Y,
-                Center::F => Color::B,
-                Center::R => Color::R,
-                Center::B => Color::G,
-                Center::L => Color::O,
-                Center::D => Color::W,
-            ],
+            center_pieces: [Color::Y, Color::B, Color::R, Color::G, Color::O, Color::W],
         }
     }
 
@@ -141,6 +115,16 @@ impl Skewb {
             x => panic!(format!("{:?} not a corner piece index", x)),
         }
     }
+    fn center_to_i(c: &Center) -> usize {
+        match c {
+            Center::U => 0,
+            Center::F => 1,
+            Center::R => 2,
+            Center::B => 3,
+            Center::L => 4,
+            Center::D => 5,
+        }
+    }
 
     pub fn get_corner_piece(&self, c: &Corner) -> CornerPiece {
         Self::i_to_corner_piece(self.corner_pieces[Self::corner_to_i(c)])
@@ -148,7 +132,7 @@ impl Skewb {
     pub fn get_corner_orientation(&self, c: &Corner) -> Orientation {
         self.corner_orientations[Self::corner_to_i(c)]
     }
-    pub fn get_center_piece(&self, c: &Center) -> Color { self.center_pieces[c] }
+    pub fn get_center_piece(&self, c: &Center) -> Color { self.center_pieces[Self::center_to_i(c)] }
 
     fn rotate_elements<V>(array: &mut [V], keys: &Vec<usize>) {
         if keys.len() <= 1 {
@@ -160,20 +144,6 @@ impl Skewb {
         }
     }
 
-    fn rotate_values<K, V>(h: &mut HashMap<K, V>, keys: &[K])
-    where K: Eq + Hash + Copy {
-        if keys.len() <= 1 {
-            return;
-        }
-
-        let temp = h.remove(keys.first().unwrap()).unwrap();
-        for i in 0..keys.len() - 1 {
-            let x = h.remove(&keys[i + 1]).unwrap();
-            h.insert(keys[i], x);
-        }
-        h.insert(*keys.last().unwrap(), temp);
-    }
-
     pub fn turn_lr(&mut self, c: &Corner) {
         let corners = [
             (c.0, c.1, 1 - c.2),
@@ -183,18 +153,26 @@ impl Skewb {
             .map(|x| Self::corner_to_i(&x))
             .collect();
 
+        Self::rotate_elements(&mut self.corner_pieces, &corners);
+        Self::rotate_elements(&mut self.corner_orientations, &corners);
+
         *self
             .corner_orientations
             .get_mut(Self::corner_to_i(&c))
             .unwrap() += Orientation::LR;
 
-        Self::rotate_values(&mut self.center_pieces, &Center::centers_for_corner(&c));
-
-        Self::rotate_elements(&mut self.corner_pieces, &corners);
-        Self::rotate_elements(&mut self.corner_orientations, &corners);
         for &c in corners.iter() {
             *self.corner_orientations.get_mut(c).unwrap() += Orientation::LR;
         }
+
+        let centers = [
+            if c.2 == 0 { Center::B } else { Center::F },
+            if c.1 == 0 { Center::L } else { Center::R },
+            if c.0 == 0 { Center::U } else { Center::D },
+        ].into_iter()
+            .map(|x| Self::center_to_i(&x))
+            .collect();
+        Self::rotate_elements(&mut self.center_pieces, &centers);
     }
     pub fn turn_fb(&mut self, c: &Corner) {
         self.turn_lr(c);
