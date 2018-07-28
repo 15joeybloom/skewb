@@ -1,4 +1,4 @@
-use std;
+use std::ops::{Add, AddAssign, Sub};
 
 pub type Corner = (u8, u8, u8);
 
@@ -19,7 +19,7 @@ pub enum Orientation {
     FB,
 }
 
-impl std::ops::Add<Orientation> for Orientation {
+impl Add<Orientation> for Orientation {
     type Output = Orientation;
     fn add(self, other: Orientation) -> Orientation {
         match (self, other) {
@@ -32,7 +32,7 @@ impl std::ops::Add<Orientation> for Orientation {
         }
     }
 }
-impl std::ops::Sub<Orientation> for Orientation {
+impl Sub<Orientation> for Orientation {
     type Output = Orientation;
     fn sub(self, other: Orientation) -> Orientation {
         match (self, other) {
@@ -47,7 +47,7 @@ impl std::ops::Sub<Orientation> for Orientation {
     }
 }
 
-impl std::ops::AddAssign<Orientation> for Orientation {
+impl AddAssign<Orientation> for Orientation {
     fn add_assign(&mut self, rhs: Orientation) { *self = *self + rhs; }
 }
 
