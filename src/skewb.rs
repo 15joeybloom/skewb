@@ -86,9 +86,9 @@ impl Center {
 
 #[derive(Debug)]
 pub struct Skewb {
-    pub corner_pieces: HashMap<Corner, CornerPiece>,
-    pub corner_orientations: HashMap<Corner, Orientation>,
-    pub center_pieces: HashMap<Center, Color>,
+    corner_pieces: HashMap<Corner, CornerPiece>,
+    corner_orientations: HashMap<Corner, Orientation>,
+    center_pieces: HashMap<Center, Color>,
 }
 
 macro_rules! hashmap {
@@ -132,6 +132,10 @@ impl Skewb {
             ],
         }
     }
+
+    pub fn get_corner_piece(&self, c: &Corner) -> CornerPiece { self.corner_pieces[c] }
+    pub fn get_corner_orientation(&self, c: &Corner) -> Orientation { self.corner_orientations[c] }
+    pub fn get_center_piece(&self, c: &Center) -> Color { self.center_pieces[c] }
 
     fn rotate_values<K, V>(h: &mut HashMap<K, V>, keys: &[K])
     where K: Eq + Hash + Copy {

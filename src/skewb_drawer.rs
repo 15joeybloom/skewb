@@ -126,8 +126,9 @@ impl SkewbDrawer {
                 continue;
             }
 
-            let color =
-                skewb.corner_pieces[corner].sticker(*sticker - skewb.corner_orientations[corner]);
+            let corner_piece = skewb.get_corner_piece(corner);
+            let corner_orientation = skewb.get_corner_orientation(corner);
+            let color = corner_piece.sticker(*sticker - corner_orientation);
             let p = [
                 self.corner_points[corner],
                 self.edge_points[&Edge::new(*corner, *left_corner)],
@@ -151,7 +152,7 @@ impl SkewbDrawer {
                 self.edge_points[&Edge::new(corners[2], corners[3])],
                 self.edge_points[&Edge::new(corners[3], corners[0])],
             ];
-            Polygon::new(skewb.center_pieces[&center].rgba()).draw(
+            Polygon::new(skewb.get_center_piece(&center).rgba()).draw(
                 &p,
                 &c.draw_state,
                 c.transform,
