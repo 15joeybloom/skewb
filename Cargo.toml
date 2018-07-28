@@ -1,0 +1,10 @@
+[package]
+name = "skewb"
+version = "0.1.0"
+authors = ["joey"]
+
+[dependencies]
+piston = "*"
+piston2d-graphics = "*"
+piston2d-opengl_graphics = "*"
+pistoncore-glutin_window = "*"
