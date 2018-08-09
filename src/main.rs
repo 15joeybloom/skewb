@@ -11,12 +11,12 @@ use piston::window::WindowSettings;
 
 use graphics::Graphics;
 
-mod skewb;
-mod skewb_drawer;
+mod skewb2;
+mod skewb2_drawer;
 mod unordered_pair;
 
-use skewb::Skewb;
-use skewb_drawer::SkewbDrawer;
+use skewb2::Skewb;
+use skewb2_drawer::SkewbDrawer;
 
 fn main() {
     let opengl = OpenGL::V3_2;
@@ -30,17 +30,20 @@ fn main() {
 
     let drawer = SkewbDrawer::new();
     let mut solved = Skewb::new();
-    solved.turn_fb(&(0, 1, 0));
+    /*
+    solved.rotate_ud();
+    solved.turn_fb(&(1, 0, 1));
     solved.turn_lr(&(0, 0, 0));
-    solved.turn_fb(&(0, 1, 0));
+    solved.turn_fb(&(1, 0, 1));
     solved.turn_lr(&(0, 0, 0));
-    solved.turn_fb(&(0, 1, 0));
+    solved.turn_fb(&(1, 0, 1));
     solved.turn_lr(&(0, 0, 0));
-    solved.turn_fb(&(0, 1, 0));
+    solved.turn_fb(&(1, 0, 1));
     solved.turn_lr(&(0, 0, 0));
-    solved.turn_fb(&(0, 1, 0));
+    solved.turn_fb(&(1, 0, 1));
     solved.turn_lr(&(0, 0, 0));
-    solved.turn_fb(&(0, 1, 0));
+    */
+    solved.turn_fb(&(1, 0, 1));
     solved.turn_lr(&(0, 0, 0));
 
     while let Some(e) = events.next(&mut window) {
