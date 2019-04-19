@@ -12,11 +12,11 @@ use piston::window::WindowSettings;
 use graphics::Graphics;
 
 mod skewb2;
-mod skewb2_drawer;
+mod drawer2;
 mod unordered_pair;
 
 use skewb2::Skewb;
-use skewb2_drawer::SkewbDrawer;
+use drawer2::Drawer;
 
 fn main() {
     let opengl = OpenGL::V3_2;
@@ -28,7 +28,7 @@ fn main() {
     let mut events = Events::new(EventSettings::new().lazy(true));
     let mut gl = GlGraphics::new(opengl);
 
-    let drawer = SkewbDrawer::new();
+    let drawer = Drawer::new();
     let mut solved = Skewb::new();
     /*
     solved.rotate_ud();

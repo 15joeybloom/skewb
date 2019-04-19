@@ -200,32 +200,6 @@ impl Skewb {
         self.turn_lr(c);
         self.turn_lr(c);
     }
-
-    /*
-    pub fn rotate_ud(&mut self) {
-        let corners = [(0, 0, 0), (0, 0, 1), (0, 1, 1), (0, 1, 0)]
-            .into_iter()
-            .map(|x| Self::fixed_or_moving(&x).1)
-            .collect();
-
-        Self::rotate_elements(&mut self.moving_pieces, &corners);
-        Self::rotate_elements(&mut self.moving_orientations, &corners);
-
-        let corners = [(1, 0, 0), (1, 0, 1), (1, 1, 1), (1, 1, 0)]
-            .into_iter()
-            .map(|x| Self::fixed_or_moving(&x).1)
-            .collect();
-
-        Self::rotate_elements(&mut self.moving_pieces, &corners);
-        Self::rotate_elements(&mut self.moving_orientations, &corners);
-
-        let centers = [Center::B, Center::L, Center::F, Center::R]
-            .into_iter()
-            .map(|x| Self::center_to_i(&x))
-            .collect();
-        Self::rotate_elements(&mut self.center_pieces, &centers);
-    }
-    */
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]

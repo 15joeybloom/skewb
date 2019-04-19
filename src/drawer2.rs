@@ -33,13 +33,13 @@ impl skewb2::Color {
 
 type Edge = unordered_pair::UnorderedPair<Corner>;
 
-pub struct SkewbDrawer {
+pub struct Drawer {
     corner_points: HashMap<Corner, Vec2d<f64>>,
     edge_points: HashMap<Edge, Vec2d<f64>>,
     corner_stickers: HashMap<(Corner, Orientation), (Corner, Corner)>,
 }
-impl SkewbDrawer {
-    pub fn new() -> SkewbDrawer {
+impl Drawer {
+    pub fn new() -> Drawer {
         let mut corner_points = HashMap::<Corner, Vec2d<f64>>::new();
         for i in 0..2 {
             for j in 0..2 {
@@ -87,7 +87,7 @@ impl SkewbDrawer {
             }
         }
 
-        SkewbDrawer {
+        Drawer {
             corner_points: corner_points,
             edge_points: edge_points,
             corner_stickers: corner_stickers,
