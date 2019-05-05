@@ -10,23 +10,23 @@ use graphics::{Context, Graphics};
 
 use std::collections::HashMap;
 
-use skewb2;
-use skewb2::Center;
-use skewb2::Corner;
-use skewb2::Orientation;
-use skewb2::Skewb;
+use normalized_skewb;
+use normalized_skewb::Center;
+use normalized_skewb::Corner;
+use normalized_skewb::Orientation;
+use normalized_skewb::Skewb;
 
 use unordered_pair;
 
-impl skewb2::Color {
+impl normalized_skewb::Color {
     pub fn rgba(self) -> graphics::types::Color {
         match self {
-            skewb2::Color::B => [0.0, 0.0, 1.0, 1.0],
-            skewb2::Color::G => [0.0, 0.8, 0.0, 1.0],
-            skewb2::Color::R => [1.0, 0.1, 0.1, 1.0],
-            skewb2::Color::O => [1.0, 0.8, 0.0, 1.0],
-            skewb2::Color::Y => [1.0, 1.0, 0.0, 1.0],
-            skewb2::Color::W => [1.0, 1.0, 1.0, 1.0],
+            normalized_skewb::Color::B => [0.0, 0.0, 1.0, 1.0],
+            normalized_skewb::Color::G => [0.0, 0.8, 0.0, 1.0],
+            normalized_skewb::Color::R => [1.0, 0.1, 0.1, 1.0],
+            normalized_skewb::Color::O => [1.0, 0.8, 0.0, 1.0],
+            normalized_skewb::Color::Y => [1.0, 1.0, 0.0, 1.0],
+            normalized_skewb::Color::W => [1.0, 1.0, 1.0, 1.0],
         }
     }
 }

@@ -11,11 +11,11 @@ use piston::window::WindowSettings;
 
 use graphics::Graphics;
 
-mod skewb2;
+mod normalized_skewb;
 mod drawer2;
 mod unordered_pair;
 
-use skewb2::Skewb;
+use normalized_skewb::Skewb;
 use drawer2::Drawer;
 
 fn main() {
