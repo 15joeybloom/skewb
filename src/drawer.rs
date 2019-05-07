@@ -110,7 +110,7 @@ impl Drawer {
                 if e0 == e1 || e0.disjoint(e1) {
                     continue;
                 }
-                // don't draw the back face:
+                // don't draw the down face:
                 else if e0.one.0 == 1 && e0.two.0 == 1 && e1.one.0 == 1 && e1.two.0 == 1 {
                     continue;
                 } else {
@@ -121,7 +121,7 @@ impl Drawer {
 
         // Fill in the corner pieces
         for ((corner, sticker), (left_corner, right_corner)) in self.corner_stickers.iter() {
-            // don't draw the back face
+            // don't draw the down face
             if left_corner.0 == 1 && right_corner.0 == 1 {
                 continue;
             }

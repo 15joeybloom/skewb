@@ -12,11 +12,12 @@ use piston::window::WindowSettings;
 use graphics::Graphics;
 
 mod normalized_skewb;
-mod drawer2;
+mod skewb;
+mod drawer;
 mod unordered_pair;
 
-use normalized_skewb::Skewb;
-use drawer2::Drawer;
+use skewb::Skewb;
+use drawer::Drawer;
 
 fn main() {
     let opengl = OpenGL::V3_2;
@@ -30,8 +31,10 @@ fn main() {
 
     let drawer = Drawer::new();
     let mut solved = Skewb::new();
+    //solved.rotate_ud();
     /*
-    solved.rotate_ud();
+    solved.turn_fb(&(1, 0, 1));
+    solved.turn_lr(&(0, 0, 0));
     solved.turn_fb(&(1, 0, 1));
     solved.turn_lr(&(0, 0, 0));
     solved.turn_fb(&(1, 0, 1));
@@ -43,8 +46,6 @@ fn main() {
     solved.turn_fb(&(1, 0, 1));
     solved.turn_lr(&(0, 0, 0));
     */
-    solved.turn_fb(&(1, 0, 1));
-    solved.turn_lr(&(0, 0, 0));
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
