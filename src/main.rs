@@ -31,21 +31,11 @@ fn main() {
 
     let drawer = Drawer::new();
     let mut solved = Skewb::new();
-    //solved.rotate_ud();
-    /*
+    solved.rotate_ud();
+    solved.rotate_fb();
+    solved.rotate_lr();
     solved.turn_fb(&(1, 0, 1));
     solved.turn_lr(&(0, 0, 0));
-    solved.turn_fb(&(1, 0, 1));
-    solved.turn_lr(&(0, 0, 0));
-    solved.turn_fb(&(1, 0, 1));
-    solved.turn_lr(&(0, 0, 0));
-    solved.turn_fb(&(1, 0, 1));
-    solved.turn_lr(&(0, 0, 0));
-    solved.turn_fb(&(1, 0, 1));
-    solved.turn_lr(&(0, 0, 0));
-    solved.turn_fb(&(1, 0, 1));
-    solved.turn_lr(&(0, 0, 0));
-    */
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {

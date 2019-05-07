@@ -78,6 +78,7 @@ pub struct Skewb {
     corner_pieces: [usize; 8],
     corner_orientations: [Orientation; 8],
     center_pieces: [Color; 6],
+    even_rotation: bool,
 }
 
 impl Skewb {
@@ -86,6 +87,7 @@ impl Skewb {
             corner_pieces: [0, 1, 2, 3, 4, 5, 6, 7],
             corner_orientations: [Orientation::UD; 8],
             center_pieces: [Color::Y, Color::B, Color::R, Color::G, Color::O, Color::W],
+            even_rotation: true,
         }
     }
 
@@ -102,17 +104,31 @@ impl Skewb {
             x => panic!(format!("{:?} not a corner", x)),
         }
     }
-    fn i_to_corner_piece(i: usize) -> CornerPiece {
-        match i {
-            0 => CornerPiece(Color::Y, Color::O, Color::G),
-            1 => CornerPiece(Color::Y, Color::O, Color::B),
-            2 => CornerPiece(Color::Y, Color::R, Color::B),
-            3 => CornerPiece(Color::Y, Color::R, Color::G),
-            4 => CornerPiece(Color::W, Color::O, Color::G),
-            5 => CornerPiece(Color::W, Color::O, Color::B),
-            6 => CornerPiece(Color::W, Color::R, Color::B),
-            7 => CornerPiece(Color::W, Color::R, Color::G),
-            x => panic!(format!("{:?} not a corner piece index", x)),
+    fn i_to_corner_piece(&self, i: usize) -> CornerPiece {
+        if self.even_rotation {
+            match i {
+                0 => CornerPiece(Color::Y, Color::O, Color::G),
+                1 => CornerPiece(Color::Y, Color::O, Color::B),
+                2 => CornerPiece(Color::Y, Color::R, Color::B),
+                3 => CornerPiece(Color::Y, Color::R, Color::G),
+                4 => CornerPiece(Color::W, Color::O, Color::G),
+                5 => CornerPiece(Color::W, Color::O, Color::B),
+                6 => CornerPiece(Color::W, Color::R, Color::B),
+                7 => CornerPiece(Color::W, Color::R, Color::G),
+                x => panic!(format!("{:?} not a corner piece index", x)),
+            }
+        } else {
+            match i {
+                0 => CornerPiece(Color::Y, Color::G, Color::O),
+                1 => CornerPiece(Color::Y, Color::B, Color::O),
+                2 => CornerPiece(Color::Y, Color::B, Color::R),
+                3 => CornerPiece(Color::Y, Color::G, Color::R),
+                4 => CornerPiece(Color::W, Color::G, Color::O),
+                5 => CornerPiece(Color::W, Color::B, Color::O),
+                6 => CornerPiece(Color::W, Color::B, Color::R),
+                7 => CornerPiece(Color::W, Color::G, Color::R),
+                x => panic!(format!("{:?} not a corner piece index", x)),
+            }
         }
     }
     fn center_to_i(c: &Center) -> usize {
@@ -127,7 +143,7 @@ impl Skewb {
     }
 
     pub fn get_corner_piece(&self, c: &Corner) -> CornerPiece {
-        Self::i_to_corner_piece(self.corner_pieces[Self::corner_to_i(c)])
+        self.i_to_corner_piece(self.corner_pieces[Self::corner_to_i(c)])
     }
     pub fn get_corner_orientation(&self, c: &Corner) -> Orientation {
         self.corner_orientations[Self::corner_to_i(c)]
@@ -201,6 +217,81 @@ impl Skewb {
             .map(|x| Self::center_to_i(&x))
             .collect();
         Self::rotate_elements(&mut self.center_pieces, &centers);
+
+        self.even_rotation = !self.even_rotation;
+        for i in 0..8 {
+            self.corner_orientations[i] = match self.corner_orientations[i] {
+                Orientation::UD => Orientation::UD,
+                Orientation::LR => Orientation::FB,
+                Orientation::FB => Orientation::LR,
+            };
+        }
+    }
+
+    pub fn rotate_fb(&mut self) {
+        let corners = [(0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)]
+            .into_iter()
+            .map(|x| Self::corner_to_i(&x))
+            .collect();
+
+        Self::rotate_elements(&mut self.corner_pieces, &corners);
+        Self::rotate_elements(&mut self.corner_orientations, &corners);
+
+        let corners = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
+            .into_iter()
+            .map(|x| Self::corner_to_i(&x))
+            .collect();
+
+        Self::rotate_elements(&mut self.corner_pieces, &corners);
+        Self::rotate_elements(&mut self.corner_orientations, &corners);
+
+        let centers = [Center::U, Center::L, Center::D, Center::R]
+            .into_iter()
+            .map(|x| Self::center_to_i(&x))
+            .collect();
+        Self::rotate_elements(&mut self.center_pieces, &centers);
+
+        self.even_rotation = !self.even_rotation;
+        for i in 0..8 {
+            self.corner_orientations[i] = match self.corner_orientations[i] {
+                Orientation::UD => Orientation::LR,
+                Orientation::LR => Orientation::UD,
+                Orientation::FB => Orientation::FB,
+            };
+        }
+    }
+
+    pub fn rotate_lr(&mut self) {
+        let corners = [(0, 0, 1), (1, 0, 1), (1, 0, 0), (0, 0, 0)]
+            .into_iter()
+            .map(|x| Self::corner_to_i(&x))
+            .collect();
+
+        Self::rotate_elements(&mut self.corner_pieces, &corners);
+        Self::rotate_elements(&mut self.corner_orientations, &corners);
+
+        let corners = [(0, 1, 1), (1, 1, 1), (1, 1, 0), (0, 1, 0)]
+            .into_iter()
+            .map(|x| Self::corner_to_i(&x))
+            .collect();
+
+        Self::rotate_elements(&mut self.corner_pieces, &corners);
+        Self::rotate_elements(&mut self.corner_orientations, &corners);
+
+        let centers = [Center::U, Center::F, Center::D, Center::B]
+            .into_iter()
+            .map(|x| Self::center_to_i(&x))
+            .collect();
+        Self::rotate_elements(&mut self.center_pieces, &centers);
+
+        self.even_rotation = !self.even_rotation;
+        for i in 0..8 {
+            self.corner_orientations[i] = match self.corner_orientations[i] {
+                Orientation::UD => Orientation::FB,
+                Orientation::LR => Orientation::LR,
+                Orientation::FB => Orientation::UD,
+            };
+        }
     }
 }
 
