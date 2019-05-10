@@ -201,10 +201,3 @@ impl Skewb {
         self.turn_lr(c);
     }
 }
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-struct Turn {
-    corners: [Corner; 3],
-    centers: [Center; 3],
-    twisty: Corner,
-}
