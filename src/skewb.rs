@@ -73,6 +73,16 @@ pub enum Center {
     B,
 }
 
+fn rotate_elements<V>(array: &mut [V], keys: &Vec<usize>) {
+    if keys.len() <= 1 {
+        return;
+    }
+
+    for i in 0..keys.len() - 1 {
+        array.swap(keys[i], keys[i + 1]);
+    }
+}
+
 #[derive(Debug)]
 pub struct Skewb {
     corner_pieces: [usize; 8],
@@ -150,16 +160,6 @@ impl Skewb {
     }
     pub fn get_center_piece(&self, c: &Center) -> Color { self.center_pieces[Self::center_to_i(c)] }
 
-    fn rotate_elements<V>(array: &mut [V], keys: &Vec<usize>) {
-        if keys.len() <= 1 {
-            return;
-        }
-
-        for i in 0..keys.len() - 1 {
-            array.swap(keys[i], keys[i + 1]);
-        }
-    }
-
     pub fn turn_lr(&mut self, c: &Corner) {
         let corners = [
             (c.0, c.1, 1 - c.2),
@@ -169,8 +169,8 @@ impl Skewb {
             .map(|x| Self::corner_to_i(&x))
             .collect();
 
-        Self::rotate_elements(&mut self.corner_pieces, &corners);
-        Self::rotate_elements(&mut self.corner_orientations, &corners);
+        rotate_elements(&mut self.corner_pieces, &corners);
+        rotate_elements(&mut self.corner_orientations, &corners);
 
         *self
             .corner_orientations
@@ -188,7 +188,7 @@ impl Skewb {
         ].into_iter()
             .map(|x| Self::center_to_i(&x))
             .collect();
-        Self::rotate_elements(&mut self.center_pieces, &centers);
+        rotate_elements(&mut self.center_pieces, &centers);
     }
     pub fn turn_fb(&mut self, c: &Corner) {
         self.turn_lr(c);
@@ -201,22 +201,22 @@ impl Skewb {
             .map(|x| Self::corner_to_i(&x))
             .collect();
 
-        Self::rotate_elements(&mut self.corner_pieces, &corners);
-        Self::rotate_elements(&mut self.corner_orientations, &corners);
+        rotate_elements(&mut self.corner_pieces, &corners);
+        rotate_elements(&mut self.corner_orientations, &corners);
 
         let corners = [(1, 0, 0), (1, 0, 1), (1, 1, 1), (1, 1, 0)]
             .into_iter()
             .map(|x| Self::corner_to_i(&x))
             .collect();
 
-        Self::rotate_elements(&mut self.corner_pieces, &corners);
-        Self::rotate_elements(&mut self.corner_orientations, &corners);
+        rotate_elements(&mut self.corner_pieces, &corners);
+        rotate_elements(&mut self.corner_orientations, &corners);
 
         let centers = [Center::B, Center::L, Center::F, Center::R]
             .into_iter()
             .map(|x| Self::center_to_i(&x))
             .collect();
-        Self::rotate_elements(&mut self.center_pieces, &centers);
+        rotate_elements(&mut self.center_pieces, &centers);
 
         self.even_rotation = !self.even_rotation;
         for i in 0..8 {
@@ -234,22 +234,22 @@ impl Skewb {
             .map(|x| Self::corner_to_i(&x))
             .collect();
 
-        Self::rotate_elements(&mut self.corner_pieces, &corners);
-        Self::rotate_elements(&mut self.corner_orientations, &corners);
+        rotate_elements(&mut self.corner_pieces, &corners);
+        rotate_elements(&mut self.corner_orientations, &corners);
 
         let corners = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
             .into_iter()
             .map(|x| Self::corner_to_i(&x))
             .collect();
 
-        Self::rotate_elements(&mut self.corner_pieces, &corners);
-        Self::rotate_elements(&mut self.corner_orientations, &corners);
+        rotate_elements(&mut self.corner_pieces, &corners);
+        rotate_elements(&mut self.corner_orientations, &corners);
 
         let centers = [Center::U, Center::L, Center::D, Center::R]
             .into_iter()
             .map(|x| Self::center_to_i(&x))
             .collect();
-        Self::rotate_elements(&mut self.center_pieces, &centers);
+        rotate_elements(&mut self.center_pieces, &centers);
 
         self.even_rotation = !self.even_rotation;
         for i in 0..8 {
@@ -267,22 +267,22 @@ impl Skewb {
             .map(|x| Self::corner_to_i(&x))
             .collect();
 
-        Self::rotate_elements(&mut self.corner_pieces, &corners);
-        Self::rotate_elements(&mut self.corner_orientations, &corners);
+        rotate_elements(&mut self.corner_pieces, &corners);
+        rotate_elements(&mut self.corner_orientations, &corners);
 
         let corners = [(0, 1, 1), (1, 1, 1), (1, 1, 0), (0, 1, 0)]
             .into_iter()
             .map(|x| Self::corner_to_i(&x))
             .collect();
 
-        Self::rotate_elements(&mut self.corner_pieces, &corners);
-        Self::rotate_elements(&mut self.corner_orientations, &corners);
+        rotate_elements(&mut self.corner_pieces, &corners);
+        rotate_elements(&mut self.corner_orientations, &corners);
 
         let centers = [Center::U, Center::F, Center::D, Center::B]
             .into_iter()
             .map(|x| Self::center_to_i(&x))
             .collect();
-        Self::rotate_elements(&mut self.center_pieces, &centers);
+        rotate_elements(&mut self.center_pieces, &centers);
 
         self.even_rotation = !self.even_rotation;
         for i in 0..8 {
