@@ -47,8 +47,8 @@ impl Drawer {
                     corner_points.insert(
                         (i, j, k),
                         [
-                            250.0 + (2.0 * j as f64 - 1.0) * (75.0 + i as f64 * 75.0),
-                            250.0 + (2.0 * k as f64 - 1.0) * (75.0 + i as f64 * 75.0),
+                            250.0 + (2.0 * f64::from(j) - 1.0) * (75.0 + f64::from(i) * 75.0),
+                            250.0 + (2.0 * f64::from(k) - 1.0) * (75.0 + f64::from(i) * 75.0),
                         ],
                     );
                 }
@@ -87,11 +87,7 @@ impl Drawer {
             }
         }
 
-        Drawer {
-            corner_points: corner_points,
-            edge_points: edge_points,
-            corner_stickers: corner_stickers,
-        }
+        Drawer { corner_points, edge_points, corner_stickers }
     }
     pub fn draw<G: Graphics>(&self, skewb: &Skewb, c: &Context, g: &mut G) {
         let black = [0.0, 0.0, 0.0, 1.0];
@@ -107,11 +103,9 @@ impl Drawer {
         // edges.
         for (e0, [x0, y0]) in self.edge_points.iter() {
             for (e1, [x1, y1]) in self.edge_points.iter() {
-                if e0 == e1 || e0.disjoint(e1) {
-                    continue;
-                }
-                // don't draw the down face:
-                else if e0.one.0 == 1 && e0.two.0 == 1 && e1.one.0 == 1 && e1.two.0 == 1 {
+                if e0 == e1 || e0.disjoint(e1)
+                        // don't draw the down face:
+                        || (e0.one.0 == 1 && e0.two.0 == 1 && e1.one.0 == 1 && e1.two.0 == 1) {
                     continue;
                 } else {
                     Line::new(black, 1.0).draw([*x0, *y0, *x1, *y1], &c.draw_state, c.transform, g);
@@ -126,8 +120,8 @@ impl Drawer {
                 continue;
             }
 
-            let corner_piece = skewb.get_corner_piece(corner);
-            let corner_orientation = skewb.get_corner_orientation(corner);
+            let corner_piece = skewb.get_corner_piece(*corner);
+            let corner_orientation = skewb.get_corner_orientation(*corner);
             let color = corner_piece.sticker(*sticker - corner_orientation);
             let p = [
                 self.corner_points[corner],
@@ -152,7 +146,7 @@ impl Drawer {
                 self.edge_points[&Edge::new(corners[2], corners[3])],
                 self.edge_points[&Edge::new(corners[3], corners[0])],
             ];
-            Polygon::new(skewb.get_center_piece(&center).rgba()).draw(
+            Polygon::new(skewb.get_center_piece(center).rgba()).draw(
                 &p,
                 &c.draw_state,
                 c.transform,

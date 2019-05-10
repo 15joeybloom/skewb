@@ -12,7 +12,7 @@ pub struct UnorderedPair<T> {
 impl<T> UnorderedPair<T>
 where T: Eq
 {
-    pub fn new(one: T, two: T) -> UnorderedPair<T> { UnorderedPair::<T> { one: one, two: two } }
+    pub fn new(one: T, two: T) -> UnorderedPair<T> { UnorderedPair::<T> { one, two } }
     pub fn contains(&self, t: &T) -> bool { self.one == *t || self.two == *t }
     pub fn disjoint(&self, other: &UnorderedPair<T>) -> bool {
         !self.contains(&other.one) && !self.contains(&other.two)

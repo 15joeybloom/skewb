@@ -31,16 +31,16 @@ fn main() {
 
     let drawer = Drawer::new();
     let mut solved = Skewb::new();
-    solved.turn_fb(&(0, 1, 1));
-    solved.turn_fb(&(0, 0, 1));
-    solved.turn_lr(&(0, 1, 1));
-    solved.turn_lr(&(0, 0, 1));
+    solved.turn_fb((0, 1, 1));
+    solved.turn_fb((0, 0, 1));
+    solved.turn_lr((0, 1, 1));
+    solved.turn_lr((0, 0, 1));
     solved.rotate_ud();
     solved.rotate_ud();
-    solved.turn_fb(&(0, 1, 1));
-    solved.turn_fb(&(0, 0, 1));
-    solved.turn_lr(&(0, 1, 1));
-    solved.turn_lr(&(0, 0, 1));
+    solved.turn_fb((0, 1, 1));
+    solved.turn_fb((0, 0, 1));
+    solved.turn_lr((0, 1, 1));
+    solved.turn_lr((0, 0, 1));
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
