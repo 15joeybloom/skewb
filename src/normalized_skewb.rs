@@ -74,7 +74,7 @@ pub enum Center {
 }
 
 #[derive(Debug)]
-pub struct Skewb {
+pub struct NormalizedSkewb {
     fixed_orientations: [Orientation; 4],
     moving_pieces: [usize; 4],
     moving_orientations: [Orientation; 4],
@@ -87,9 +87,9 @@ enum FixedOrMoving {
     Moving,
 }
 
-impl Skewb {
-    pub fn new() -> Skewb {
-        Skewb {
+impl NormalizedSkewb {
+    pub fn new() -> NormalizedSkewb {
+        NormalizedSkewb {
             fixed_orientations: [Orientation::UD; 4],
             moving_pieces: [0, 1, 2, 3],
             moving_orientations: [Orientation::UD; 4],
