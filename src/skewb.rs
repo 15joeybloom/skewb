@@ -97,6 +97,7 @@ impl Skewb {
             corner_pieces: [0, 1, 2, 3, 4, 5, 6, 7],
             corner_orientations: [Orientation::UD; 8],
             center_pieces: [Color::Y, Color::B, Color::R, Color::G, Color::O, Color::W],
+            // TODO: this can be computed in a method; we don't need to store this.
             even_rotation: true,
         }
     }
@@ -291,6 +292,47 @@ impl Skewb {
                 Orientation::LR => Orientation::LR,
                 Orientation::FB => Orientation::UD,
             };
+        }
+    }
+
+    fn i_to_moving_i(i: usize) -> usize {
+        match i {
+            1 => 0,
+            3 => 1,
+            4 => 2,
+            6 => 3,
+            _ => panic!("Not a moving corner index!"),
+        }
+    }
+
+    pub fn normalize(self) -> NormalizedSkewb {
+        // TODO: Automatically rotate self so the fixed corners are permuted correctly
+        if self.corner_pieces[0] != 0 && self.corner_pieces[2] != 2 {
+            panic!("Cannot normalize skewb. Please rotate it for me.")
+        }
+        let fixed_orientations = [
+            self.corner_orientations[0],
+            self.corner_orientations[2],
+            self.corner_orientations[5],
+            self.corner_orientations[7],
+        ];
+        let moving_orientations = [
+            self.corner_orientations[1],
+            self.corner_orientations[3],
+            self.corner_orientations[4],
+            self.corner_orientations[6],
+        ];
+        let moving_pieces = [
+            Self::i_to_moving_i(self.corner_pieces[1]),
+            Self::i_to_moving_i(self.corner_pieces[3]),
+            Self::i_to_moving_i(self.corner_pieces[4]),
+            Self::i_to_moving_i(self.corner_pieces[6]),
+        ];
+        NormalizedSkewb {
+            center_pieces: self.center_pieces,
+            fixed_orientations,
+            moving_orientations,
+            moving_pieces,
         }
     }
 }

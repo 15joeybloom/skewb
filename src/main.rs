@@ -41,9 +41,11 @@ fn main() {
     solved.turn_fb((0, 0, 1));
     solved.turn_lr((0, 1, 1));
     solved.turn_lr((0, 0, 1));
-
-    let mut normalized = NormalizedSkewb::new();
+    solved.rotate_ud();
+    solved.rotate_ud();
+    let mut normalized = solved.normalize();
     normalized.turn_fb((0, 1, 1));
+    normalized.turn_lr((1, 0, 1));
     let solved = normalized.denormalize();
 
     while let Some(e) = events.next(&mut window) {
