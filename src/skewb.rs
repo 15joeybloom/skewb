@@ -412,4 +412,43 @@ impl NormalizedSkewb {
         self.turn_lr(c);
         self.turn_lr(c);
     }
+
+    fn moving_i_to_i(i: usize) -> usize {
+        match i {
+            0 => 1,
+            1 => 3,
+            2 => 4,
+            3 => 6,
+            _ => panic!("Not a moving corner index!"),
+        }
+    }
+
+    pub fn denormalize(self) -> Skewb {
+        let corner_pieces = [
+            0,
+            Self::moving_i_to_i(self.moving_pieces[0]),
+            2,
+            Self::moving_i_to_i(self.moving_pieces[1]),
+            Self::moving_i_to_i(self.moving_pieces[2]),
+            5,
+            Self::moving_i_to_i(self.moving_pieces[3]),
+            7,
+        ];
+        let corner_orientations = [
+            self.fixed_orientations[0],
+            self.moving_orientations[0],
+            self.fixed_orientations[1],
+            self.moving_orientations[1],
+            self.moving_orientations[2],
+            self.fixed_orientations[2],
+            self.moving_orientations[3],
+            self.fixed_orientations[3],
+        ];
+        Skewb {
+            center_pieces: self.center_pieces,
+            corner_orientations,
+            corner_pieces,
+            even_rotation: true,
+        }
+    }
 }

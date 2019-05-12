@@ -16,6 +16,7 @@ mod drawer;
 mod unordered_pair;
 
 use skewb::Skewb;
+use skewb::NormalizedSkewb;
 use drawer::Drawer;
 
 fn main() {
@@ -40,6 +41,10 @@ fn main() {
     solved.turn_fb((0, 0, 1));
     solved.turn_lr((0, 1, 1));
     solved.turn_lr((0, 0, 1));
+
+    let mut normalized = NormalizedSkewb::new();
+    normalized.turn_fb((0, 1, 1));
+    let solved = normalized.denormalize();
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
