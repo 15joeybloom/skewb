@@ -11,7 +11,6 @@ use piston::window::WindowSettings;
 
 use graphics::Graphics;
 
-mod normalized_skewb;
 mod skewb;
 mod drawer;
 mod unordered_pair;

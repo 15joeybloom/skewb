@@ -294,3 +294,122 @@ impl Skewb {
         }
     }
 }
+
+#[derive(Debug)]
+pub struct NormalizedSkewb {
+    fixed_orientations: [Orientation; 4],
+    moving_pieces: [usize; 4],
+    moving_orientations: [Orientation; 4],
+    center_pieces: [Color; 6],
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+enum FixedOrMoving {
+    Fixed,
+    Moving,
+}
+
+impl NormalizedSkewb {
+    pub fn new() -> NormalizedSkewb {
+        NormalizedSkewb {
+            fixed_orientations: [Orientation::UD; 4],
+            moving_pieces: [0, 1, 2, 3],
+            moving_orientations: [Orientation::UD; 4],
+            center_pieces: [Color::Y, Color::B, Color::R, Color::G, Color::O, Color::W],
+        }
+    }
+
+    fn fixed_or_moving(c: &Corner) -> (FixedOrMoving, usize) {
+        match *c {
+            (0, 0, 0) => (FixedOrMoving::Fixed, 0),
+            (0, 0, 1) => (FixedOrMoving::Moving, 0),
+            (0, 1, 1) => (FixedOrMoving::Fixed, 1),
+            (0, 1, 0) => (FixedOrMoving::Moving, 1),
+            (1, 0, 0) => (FixedOrMoving::Moving, 2),
+            (1, 0, 1) => (FixedOrMoving::Fixed, 2),
+            (1, 1, 1) => (FixedOrMoving::Moving, 3),
+            (1, 1, 0) => (FixedOrMoving::Fixed, 3),
+            x => panic!(format!("{:?} not a corner", x)),
+        }
+    }
+    fn i_to_fixed_corner(i: usize) -> CornerPiece {
+        match i {
+            0 => CornerPiece(Color::Y, Color::O, Color::G),
+            1 => CornerPiece(Color::Y, Color::R, Color::B),
+            2 => CornerPiece(Color::W, Color::O, Color::B),
+            3 => CornerPiece(Color::W, Color::R, Color::G),
+            x => panic!(format!("{:?} not a fixed corner piece index", x)),
+        }
+    }
+    fn i_to_moving_corner(i: usize) -> CornerPiece {
+        match i {
+            0 => CornerPiece(Color::Y, Color::O, Color::B),
+            1 => CornerPiece(Color::Y, Color::R, Color::G),
+            2 => CornerPiece(Color::W, Color::O, Color::G),
+            3 => CornerPiece(Color::W, Color::R, Color::B),
+            x => panic!(format!("{:?} not a moving corner piece index", x)),
+        }
+    }
+    fn center_to_i(c: &Center) -> usize {
+        match c {
+            Center::U => 0,
+            Center::F => 1,
+            Center::R => 2,
+            Center::B => 3,
+            Center::L => 4,
+            Center::D => 5,
+        }
+    }
+
+    pub fn get_corner_piece(&self, c: &Corner) -> CornerPiece {
+        match Self::fixed_or_moving(c) {
+            (FixedOrMoving::Fixed, i) => Self::i_to_fixed_corner(i),
+            (FixedOrMoving::Moving, i) => Self::i_to_moving_corner(self.moving_pieces[i]),
+        }
+    }
+    pub fn get_corner_orientation(&self, c: &Corner) -> Orientation {
+        match Self::fixed_or_moving(c) {
+            (FixedOrMoving::Fixed, i) => self.fixed_orientations[i],
+            (FixedOrMoving::Moving, i) => self.moving_orientations[i],
+        }
+    }
+    pub fn get_center_piece(&self, c: &Center) -> Color { self.center_pieces[Self::center_to_i(c)] }
+
+    pub fn turn_lr(&mut self, c: &Corner) {
+        let i = if let (FixedOrMoving::Fixed, i) = Self::fixed_or_moving(c) {
+            i
+        } else {
+            panic!("Can't turn a moving corner");
+        };
+
+        let corners : Vec<usize> = [
+            (c.0, c.1, 1 - c.2),
+            (c.0, 1 - c.1, c.2),
+            (1 - c.0, c.1, c.2),
+        ].into_iter()
+            .map(|x| Self::fixed_or_moving(&x).1)
+            .collect();
+
+        rotate_elements(&mut self.moving_pieces, &corners);
+        rotate_elements(&mut self.moving_orientations, &corners);
+
+        *self.fixed_orientations.get_mut(i).unwrap() += Orientation::LR;
+
+        for &c in corners.iter() {
+            *self.moving_orientations.get_mut(c).unwrap() += Orientation::LR;
+        }
+
+        let centers : Vec<usize> = [
+            if c.2 == 0 { Center::B } else { Center::F },
+            if c.1 == 0 { Center::L } else { Center::R },
+            if c.0 == 0 { Center::U } else { Center::D },
+        ].into_iter()
+            .map(|x| Self::center_to_i(&x))
+            .collect();
+        rotate_elements(&mut self.center_pieces, &centers);
+    }
+    pub fn turn_fb(&mut self, c: &Corner) {
+        self.turn_lr(c);
+        self.turn_lr(c);
+    }
+}
