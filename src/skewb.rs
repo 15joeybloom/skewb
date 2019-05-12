@@ -332,24 +332,6 @@ impl NormalizedSkewb {
             x => panic!(format!("{:?} not a corner", x)),
         }
     }
-    fn i_to_fixed_corner(i: usize) -> CornerPiece {
-        match i {
-            0 => CornerPiece(Color::Y, Color::O, Color::G),
-            1 => CornerPiece(Color::Y, Color::R, Color::B),
-            2 => CornerPiece(Color::W, Color::O, Color::B),
-            3 => CornerPiece(Color::W, Color::R, Color::G),
-            x => panic!(format!("{:?} not a fixed corner piece index", x)),
-        }
-    }
-    fn i_to_moving_corner(i: usize) -> CornerPiece {
-        match i {
-            0 => CornerPiece(Color::Y, Color::O, Color::B),
-            1 => CornerPiece(Color::Y, Color::R, Color::G),
-            2 => CornerPiece(Color::W, Color::O, Color::G),
-            3 => CornerPiece(Color::W, Color::R, Color::B),
-            x => panic!(format!("{:?} not a moving corner piece index", x)),
-        }
-    }
     fn center_to_i(c: Center) -> usize {
         match c {
             Center::U => 0,
@@ -360,20 +342,6 @@ impl NormalizedSkewb {
             Center::D => 5,
         }
     }
-
-    pub fn get_corner_piece(&self, c: Corner) -> CornerPiece {
-        match Self::fixed_or_moving(c) {
-            (FixedOrMoving::Fixed, i) => Self::i_to_fixed_corner(i),
-            (FixedOrMoving::Moving, i) => Self::i_to_moving_corner(self.moving_pieces[i]),
-        }
-    }
-    pub fn get_corner_orientation(&self, c: Corner) -> Orientation {
-        match Self::fixed_or_moving(c) {
-            (FixedOrMoving::Fixed, i) => self.fixed_orientations[i],
-            (FixedOrMoving::Moving, i) => self.moving_orientations[i],
-        }
-    }
-    pub fn get_center_piece(&self, c: Center) -> Color { self.center_pieces[Self::center_to_i(c)] }
 
     pub fn turn_lr(&mut self, c: Corner) {
         let i = if let (FixedOrMoving::Fixed, i) = Self::fixed_or_moving(c) {
