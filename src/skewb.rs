@@ -337,7 +337,7 @@ impl Skewb {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub struct NormalizedSkewb {
     fixed_orientations: [Orientation; 4],
     moving_pieces: [usize; 4],
@@ -460,5 +460,26 @@ impl NormalizedSkewb {
             corner_pieces,
             even_rotation: true,
         }
+    }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum Direction {
+    LR,
+    FB,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub struct Move {
+    direction: Direction,
+    corner: Corner,
+}
+
+impl NormalizedSkewb {
+    pub fn execute(&mut self, move_: &Move) {
+
+    }
+    pub fn solution(&self) -> Vec<Move> {
+        Vec::new()
     }
 }
