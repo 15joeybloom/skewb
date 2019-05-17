@@ -476,10 +476,64 @@ pub struct Move {
 }
 
 impl NormalizedSkewb {
-    pub fn execute(&mut self, move_: &Move) {
+    pub fn do_move(&mut self, move_: &Move) {
+        match move_.direction {
+            FB => self.turn_fb(move_.corner),
+            LR => self.turn_lr(move_.corner),
+        }
+    }
+    pub fn undo_move(&mut self, move_: &Move){
+        match move_.direction {
+            LR => self.turn_fb(move_.corner),
+            FB => self.turn_lr(move_.corner),
+        }
+    }
 
+    pub fn is_solved(&self) -> Bool {
+        self == NormalizedSkewb::new()
+    }
+
+    fn _solution(
+        &mut self,
+        moveStack: &mut Vec<Move>,
+        discovered: &HashSet<NormalizedSkewb>,
+        maxLength: usize,
+    ) -> Bool {
+        if moveStack.length() >= maxLength || discovered.contains(self) {
+            return false;
+        }
+        discovered.add(self);
+
+        for corner in [(0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)] {
+            if moveStack.empty() && moveStack[-1].corner != corner {
+                let move_ = Move { direction: FB, corner};
+                self.do_move(move_);
+                moveStack.append(move_);
+                if self._solution(moveStack, discovered, maxLength) {
+                    return true;
+                }
+
+                let move_ = moveStack.pop();
+                self.do_move(move_);
+                move_.direction = LR;
+                moveStack.append(move_);
+                if self._solution(moveStack, discovered, maxLength) {
+                    return true;
+                }
+            }
+        }
+        discovered.remove(self);
+        return false;
     }
     pub fn solution(&self) -> Vec<Move> {
+        // Iterative DFS
+
+        for solution_length in 0..20 {
+            let discovered = HashSet::new();
+            let moveStack = Vec::new();
+            moveStack.append(self);
+            k
+        }
         Vec::new()
     }
 }
