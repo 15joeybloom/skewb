@@ -1,4 +1,5 @@
 use std::ops::{Add, AddAssign, Sub};
+use std::collections::HashSet;
 
 pub type Corner = (u8, u8, u8);
 
@@ -337,7 +338,7 @@ impl Skewb {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct NormalizedSkewb {
     fixed_orientations: [Orientation; 4],
     moving_pieces: [usize; 4],
@@ -478,62 +479,130 @@ pub struct Move {
 impl NormalizedSkewb {
     pub fn do_move(&mut self, move_: &Move) {
         match move_.direction {
-            FB => self.turn_fb(move_.corner),
-            LR => self.turn_lr(move_.corner),
+            Direction::FB => self.turn_fb(move_.corner),
+            Direction::LR => self.turn_lr(move_.corner),
         }
     }
     pub fn undo_move(&mut self, move_: &Move){
         match move_.direction {
-            LR => self.turn_fb(move_.corner),
-            FB => self.turn_lr(move_.corner),
+            Direction::LR => self.turn_fb(move_.corner),
+            Direction::FB => self.turn_lr(move_.corner),
         }
     }
 
-    pub fn is_solved(&self) -> Bool {
-        self == NormalizedSkewb::new()
+    pub fn is_solved(&self) -> bool {
+        *self == NormalizedSkewb::new()
     }
 
     fn _solution(
         &mut self,
-        moveStack: &mut Vec<Move>,
-        discovered: &HashSet<NormalizedSkewb>,
-        maxLength: usize,
-    ) -> Bool {
-        if moveStack.length() >= maxLength || discovered.contains(self) {
+        move_stack: &mut Vec<Move>,
+        discovered: &mut HashSet<NormalizedSkewb>,
+        max_length: usize,
+    ) -> bool {
+        if self.is_solved() {
+            return true;
+        } else if move_stack.len() >= max_length || discovered.contains(self) {
             return false;
         }
-        discovered.add(self);
+        discovered.insert(self.clone());
 
-        for corner in [(0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)] {
-            if moveStack.empty() && moveStack[-1].corner != corner {
-                let move_ = Move { direction: FB, corner};
-                self.do_move(move_);
-                moveStack.append(move_);
-                if self._solution(moveStack, discovered, maxLength) {
-                    return true;
-                }
-
-                let move_ = moveStack.pop();
-                self.do_move(move_);
-                move_.direction = LR;
-                moveStack.append(move_);
-                if self._solution(moveStack, discovered, maxLength) {
-                    return true;
+        for corner in [(0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)].iter() {
+            if let Some(last_move) = move_stack.last() {
+                if last_move.corner == *corner {
+                    continue;
                 }
             }
+
+            let move_ = Move { direction: Direction::FB, corner: *corner};
+            self.do_move(&move_);
+            move_stack.push(move_);
+            if self._solution(move_stack, discovered, max_length) {
+                return true;
+            }
+            self.undo_move(&move_stack.pop().unwrap());
+
+            let move_ = Move { direction: Direction::LR, corner: *corner};
+            self.do_move(&move_);
+            move_stack.push(move_);
+            if self._solution(move_stack, discovered, max_length) {
+                return true;
+            }
+            self.undo_move(&move_stack.pop().unwrap());
         }
         discovered.remove(self);
         return false;
     }
-    pub fn solution(&self) -> Vec<Move> {
+    pub fn solution(&mut self) -> Option<Vec<Move>> {
         // Iterative DFS
 
-        for solution_length in 0..20 {
-            let discovered = HashSet::new();
-            let moveStack = Vec::new();
-            moveStack.append(self);
-            k
+        for solution_length in 0..5 {
+            let mut discovered = HashSet::new();
+            let mut move_stack = vec![];
+            if self._solution(&mut move_stack, &mut discovered, solution_length) {
+                return Some(move_stack);
+            }
         }
-        Vec::new()
+        None
     }
+}
+
+#[test]
+fn already_solved() {
+    let mut sut = NormalizedSkewb::new();
+    let solution = sut.solution().unwrap();
+    assert!(solution.is_empty());
+}
+
+#[test]
+fn one_move_solution() {
+    let mut sut = NormalizedSkewb::new();
+    sut.turn_lr((0, 0, 0));
+    let solution = sut.solution().unwrap();
+    assert_eq!(1, solution.len());
+    assert_eq!(Direction::FB, solution[0].direction);
+    assert_eq!((0, 0, 0), solution[0].corner);
+}
+
+#[test]
+fn two_lefts_make_a_right() {
+    let mut sut = NormalizedSkewb::new();
+    sut.turn_lr((0, 0, 0));
+    sut.turn_lr((0, 0, 0));
+    let solution = sut.solution().unwrap();
+    assert_eq!(1, solution.len());
+    assert_eq!(Direction::LR, solution[0].direction);
+    assert_eq!((0, 0, 0), solution[0].corner);
+}
+
+#[test]
+fn two_move_solution() {
+    let mut sut = NormalizedSkewb::new();
+    sut.turn_lr((0, 0, 0));
+    sut.turn_lr((1, 0, 1));
+    let solution = sut.solution().unwrap();
+    assert_eq!(2, solution.len());
+    assert_eq!(Direction::FB, solution[0].direction);
+    assert_eq!((1, 0, 1), solution[0].corner);
+    assert_eq!(Direction::FB, solution[1].direction);
+    assert_eq!((0, 0, 0), solution[1].corner);
+}
+
+#[test]
+fn four_move_solution() {
+    let mut sut = NormalizedSkewb::new();
+    sut.turn_lr((0, 0, 0));
+    sut.turn_lr((1, 0, 1));
+    sut.turn_fb((0, 0, 0));
+    sut.turn_fb((1, 0, 1));
+    let solution = sut.solution().unwrap();
+    assert_eq!(4, solution.len());
+    assert_eq!(Direction::LR, solution[0].direction);
+    assert_eq!((1, 0, 1), solution[0].corner);
+    assert_eq!(Direction::LR, solution[1].direction);
+    assert_eq!((0, 0, 0), solution[1].corner);
+    assert_eq!(Direction::FB, solution[2].direction);
+    assert_eq!((1, 0, 1), solution[2].corner);
+    assert_eq!(Direction::FB, solution[3].direction);
+    assert_eq!((0, 0, 0), solution[3].corner);
 }
