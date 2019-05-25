@@ -340,10 +340,10 @@ impl Skewb {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct NormalizedSkewb {
-    fixed_orientations: [Orientation; 4],
-    moving_pieces: [usize; 4],
-    moving_orientations: [Orientation; 4],
-    center_pieces: [Color; 6],
+    pub fixed_orientations: [Orientation; 4],
+    pub moving_pieces: [usize; 4],
+    pub moving_orientations: [Orientation; 4],
+    pub center_pieces: [Color; 6],
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
@@ -536,7 +536,7 @@ impl NormalizedSkewb {
     pub fn solution(&mut self) -> Option<Vec<Move>> {
         // Iterative DFS
 
-        for solution_length in 0..5 {
+        for solution_length in 0..20 {
             let mut discovered = HashSet::new();
             let mut move_stack = vec![];
             if self._solution(&mut move_stack, &mut discovered, solution_length) {

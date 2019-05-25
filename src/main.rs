@@ -17,6 +17,8 @@ mod unordered_pair;
 
 use skewb::Skewb;
 use skewb::NormalizedSkewb;
+use skewb::Color;
+use skewb::Orientation;
 use drawer::Drawer;
 
 fn main() {
@@ -30,23 +32,37 @@ fn main() {
     let mut gl = GlGraphics::new(opengl);
 
     let drawer = Drawer::new();
-    let mut solved = Skewb::new();
-    solved.turn_fb((0, 1, 1));
-    solved.turn_fb((0, 0, 1));
-    solved.turn_lr((0, 1, 1));
-    solved.turn_lr((0, 0, 1));
-    solved.rotate_ud();
-    solved.rotate_ud();
-    solved.turn_fb((0, 1, 1));
-    solved.turn_fb((0, 0, 1));
-    solved.turn_lr((0, 1, 1));
-    solved.turn_lr((0, 0, 1));
-    solved.rotate_ud();
-    solved.rotate_ud();
+
+    let mut scrambled = NormalizedSkewb {
+        center_pieces: [Color::Y, Color::G, Color::R, Color::O, Color::B, Color::W],
+        fixed_orientations: [Orientation::UD, Orientation::LR, Orientation::FB, Orientation::FB],
+        moving_orientations: [Orientation::LR, Orientation::LR, Orientation::UD, Orientation::LR],
+        moving_pieces: [1, 3, 2, 0],
+    };
+
+    if let Some(solution) = scrambled.solution() {
+        for move_ in solution.iter() {
+            println!("{:?}", move_);
+        }
+    }
+    /*
+    Move { direction: FB, corner: (1, 1, 0) }
+    Move { direction: LR, corner: (0, 0, 0) }
+    Move { direction: LR, corner: (1, 0, 1) }
+    Move { direction: LR, corner: (0, 0, 0) }
+    Move { direction: FB, corner: (0, 1, 1) }
+    Move { direction: LR, corner: (1, 1, 0) }
+    Move { direction: LR, corner: (0, 0, 0) }
+    Move { direction: LR, corner: (1, 1, 0) }
+     */
+
+    let solved = Skewb::new();
     let mut normalized = solved.normalize();
     normalized.turn_fb((0, 1, 1));
     normalized.turn_lr((1, 0, 1));
-    let solved = normalized.denormalize();
+    let denormalized = normalized.denormalize();
+
+    let draw_me = scrambled.denormalize();
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
@@ -54,7 +70,7 @@ fn main() {
                 let gray = [0.99, 0.99, 0.99, 0.1];
                 g.clear_color(gray);
                 c.draw_state.blend = Some(graphics::draw_state::Blend::Multiply);
-                drawer.draw(&solved, &c, g);
+                drawer.draw(&draw_me, &c, g);
             });
         }
     }
