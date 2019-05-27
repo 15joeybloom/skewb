@@ -470,7 +470,7 @@ pub enum Direction {
     FB,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Move {
     direction: Direction,
     corner: Corner,
@@ -507,28 +507,25 @@ impl NormalizedSkewb {
         }
         discovered.insert(self.clone());
 
-        for corner in [(0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)].iter() {
+        for corner in vec![(0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)].into_iter() {
             if let Some(last_move) = move_stack.last() {
-                if last_move.corner == *corner {
+                if last_move.corner == corner {
                     continue;
                 }
             }
 
-            let move_ = Move { direction: Direction::FB, corner: *corner};
-            self.do_move(&move_);
-            move_stack.push(move_);
-            if self._solution(move_stack, discovered, max_length) {
-                return true;
+            for direction in vec![Direction::FB, Direction::LR].into_iter() {
+                let move_ = Move { direction, corner};
+                self.do_move(&move_);
+                move_stack.push(move_.clone());
+                let has_solution = self._solution(move_stack, discovered, max_length);
+                self.undo_move(&move_);
+                if has_solution {
+                    return true;
+                } else {
+                    move_stack.pop();
+                }
             }
-            self.undo_move(&move_stack.pop().unwrap());
-
-            let move_ = Move { direction: Direction::LR, corner: *corner};
-            self.do_move(&move_);
-            move_stack.push(move_);
-            if self._solution(move_stack, discovered, max_length) {
-                return true;
-            }
-            self.undo_move(&move_stack.pop().unwrap());
         }
         discovered.remove(self);
         return false;
