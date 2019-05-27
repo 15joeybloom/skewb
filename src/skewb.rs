@@ -567,9 +567,8 @@ fn two_lefts_make_a_right() {
     sut.turn_lr((0, 0, 0));
     sut.turn_lr((0, 0, 0));
     let solution = sut.solution().unwrap();
-    assert_eq!(1, solution.len());
-    assert_eq!(Direction::LR, solution[0].direction);
-    assert_eq!((0, 0, 0), solution[0].corner);
+    let expected = vec![Move { direction: Direction::LR, corner: (0, 0, 0)}];
+    assert_eq!(expected, solution);
 }
 
 #[test]
@@ -578,11 +577,11 @@ fn two_move_solution() {
     sut.turn_lr((0, 0, 0));
     sut.turn_lr((1, 0, 1));
     let solution = sut.solution().unwrap();
-    assert_eq!(2, solution.len());
-    assert_eq!(Direction::FB, solution[0].direction);
-    assert_eq!((1, 0, 1), solution[0].corner);
-    assert_eq!(Direction::FB, solution[1].direction);
-    assert_eq!((0, 0, 0), solution[1].corner);
+    let expected = vec![
+        Move { direction: Direction::FB, corner: (1, 0, 1)},
+        Move { direction: Direction::FB, corner: (0, 0, 0)},
+    ];
+    assert_eq!(expected, solution);
 }
 
 #[test]
@@ -593,13 +592,11 @@ fn four_move_solution() {
     sut.turn_fb((0, 0, 0));
     sut.turn_fb((1, 0, 1));
     let solution = sut.solution().unwrap();
-    assert_eq!(4, solution.len());
-    assert_eq!(Direction::LR, solution[0].direction);
-    assert_eq!((1, 0, 1), solution[0].corner);
-    assert_eq!(Direction::LR, solution[1].direction);
-    assert_eq!((0, 0, 0), solution[1].corner);
-    assert_eq!(Direction::FB, solution[2].direction);
-    assert_eq!((1, 0, 1), solution[2].corner);
-    assert_eq!(Direction::FB, solution[3].direction);
-    assert_eq!((0, 0, 0), solution[3].corner);
+    let expected = vec![
+        Move { direction: Direction::LR, corner: (1, 0, 1)},
+        Move { direction: Direction::LR, corner: (0, 0, 0)},
+        Move { direction: Direction::FB, corner: (1, 0, 1)},
+        Move { direction: Direction::FB, corner: (0, 0, 0)},
+    ];
+    assert_eq!(expected, solution);
 }
