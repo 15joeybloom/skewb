@@ -556,9 +556,7 @@ fn one_move_solution() {
     let mut sut = NormalizedSkewb::new();
     sut.turn_lr((0, 0, 0));
     let solution = sut.solution().unwrap();
-    assert_eq!(1, solution.len());
-    assert_eq!(Direction::FB, solution[0].direction);
-    assert_eq!((0, 0, 0), solution[0].corner);
+    assert_eq!(vec![Move { direction: Direction::FB, corner: (0, 0, 0)}], solution);
 }
 
 #[test]
