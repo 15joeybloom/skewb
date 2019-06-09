@@ -11,15 +11,15 @@ use piston::window::WindowSettings;
 
 use graphics::Graphics;
 
-mod skewb;
 mod drawer;
+mod skewb;
 mod unordered_pair;
 
-use skewb::Skewb;
-use skewb::NormalizedSkewb;
-use skewb::Color;
-use skewb::Orientation;
 use drawer::Drawer;
+use skewb::Color;
+use skewb::NormalizedSkewb;
+use skewb::Orientation;
+use skewb::Skewb;
 
 fn main() {
     let opengl = OpenGL::V3_2;
@@ -35,8 +35,18 @@ fn main() {
 
     let mut scrambled = NormalizedSkewb {
         center_pieces: [Color::Y, Color::G, Color::R, Color::O, Color::B, Color::W],
-        fixed_orientations: [Orientation::UD, Orientation::LR, Orientation::FB, Orientation::FB],
-        moving_orientations: [Orientation::LR, Orientation::LR, Orientation::UD, Orientation::LR],
+        fixed_orientations: [
+            Orientation::UD,
+            Orientation::LR,
+            Orientation::FB,
+            Orientation::FB,
+        ],
+        moving_orientations: [
+            Orientation::LR,
+            Orientation::LR,
+            Orientation::UD,
+            Orientation::LR,
+        ],
         moving_pieces: [1, 3, 2, 0],
     };
 

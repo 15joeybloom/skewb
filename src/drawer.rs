@@ -87,7 +87,11 @@ impl Drawer {
             }
         }
 
-        Drawer { corner_points, edge_points, corner_stickers }
+        Drawer {
+            corner_points,
+            edge_points,
+            corner_stickers,
+        }
     }
     pub fn draw<G: Graphics>(&self, skewb: &Skewb, c: &Context, g: &mut G) {
         let black = [0.0, 0.0, 0.0, 1.0];
@@ -105,7 +109,8 @@ impl Drawer {
             for (e1, [x1, y1]) in self.edge_points.iter() {
                 if e0 == e1 || e0.disjoint(e1)
                         // don't draw the down face:
-                        || (e0.one.0 == 1 && e0.two.0 == 1 && e1.one.0 == 1 && e1.two.0 == 1) {
+                        || (e0.one.0 == 1 && e0.two.0 == 1 && e1.one.0 == 1 && e1.two.0 == 1)
+                {
                     continue;
                 } else {
                     Line::new(black, 1.0).draw([*x0, *y0, *x1, *y1], &c.draw_state, c.transform, g);

@@ -1,5 +1,5 @@
-use std::ops::{Add, AddAssign, Sub};
 use std::collections::HashSet;
+use std::ops::{Add, AddAssign, Sub};
 
 pub type Corner = (u8, u8, u8);
 
@@ -163,13 +163,14 @@ impl Skewb {
     pub fn get_center_piece(&self, c: Center) -> Color { self.center_pieces[Self::center_to_i(c)] }
 
     pub fn turn_lr(&mut self, c: Corner) {
-        let corners : Vec<usize> = [
+        let corners: Vec<usize> = [
             (c.0, c.1, 1 - c.2),
             (c.0, 1 - c.1, c.2),
             (1 - c.0, c.1, c.2),
-        ].iter()
-            .map(|x| Self::corner_to_i(*x))
-            .collect();
+        ]
+        .iter()
+        .map(|x| Self::corner_to_i(*x))
+        .collect();
 
         rotate_elements(&mut self.corner_pieces, &corners);
         rotate_elements(&mut self.corner_orientations, &corners);
@@ -183,13 +184,14 @@ impl Skewb {
             *self.corner_orientations.get_mut(c).unwrap() += Orientation::LR;
         }
 
-        let centers : Vec<usize> = [
+        let centers: Vec<usize> = [
             if c.2 == 0 { Center::B } else { Center::F },
             if c.1 == 0 { Center::L } else { Center::R },
             if c.0 == 0 { Center::U } else { Center::D },
-        ].iter()
-            .map(|x| Self::center_to_i(*x))
-            .collect();
+        ]
+        .iter()
+        .map(|x| Self::center_to_i(*x))
+        .collect();
         rotate_elements(&mut self.center_pieces, &centers);
     }
     pub fn turn_fb(&mut self, c: Corner) {
@@ -198,7 +200,7 @@ impl Skewb {
     }
 
     pub fn rotate_ud(&mut self) {
-        let corners : Vec<usize> = [(0, 0, 0), (0, 0, 1), (0, 1, 1), (0, 1, 0)]
+        let corners: Vec<usize> = [(0, 0, 0), (0, 0, 1), (0, 1, 1), (0, 1, 0)]
             .iter()
             .map(|x| Self::corner_to_i(*x))
             .collect();
@@ -206,7 +208,7 @@ impl Skewb {
         rotate_elements(&mut self.corner_pieces, &corners);
         rotate_elements(&mut self.corner_orientations, &corners);
 
-        let corners : Vec<usize> = [(1, 0, 0), (1, 0, 1), (1, 1, 1), (1, 1, 0)]
+        let corners: Vec<usize> = [(1, 0, 0), (1, 0, 1), (1, 1, 1), (1, 1, 0)]
             .iter()
             .map(|x| Self::corner_to_i(*x))
             .collect();
@@ -214,7 +216,7 @@ impl Skewb {
         rotate_elements(&mut self.corner_pieces, &corners);
         rotate_elements(&mut self.corner_orientations, &corners);
 
-        let centers : Vec<usize> = [Center::B, Center::L, Center::F, Center::R]
+        let centers: Vec<usize> = [Center::B, Center::L, Center::F, Center::R]
             .iter()
             .map(|x| Self::center_to_i(*x))
             .collect();
@@ -231,7 +233,7 @@ impl Skewb {
     }
 
     pub fn rotate_fb(&mut self) {
-        let corners : Vec<usize> = [(0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)]
+        let corners: Vec<usize> = [(0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)]
             .iter()
             .map(|x| Self::corner_to_i(*x))
             .collect();
@@ -239,7 +241,7 @@ impl Skewb {
         rotate_elements(&mut self.corner_pieces, &corners);
         rotate_elements(&mut self.corner_orientations, &corners);
 
-        let corners : Vec<usize> = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
+        let corners: Vec<usize> = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
             .iter()
             .map(|x| Self::corner_to_i(*x))
             .collect();
@@ -247,7 +249,7 @@ impl Skewb {
         rotate_elements(&mut self.corner_pieces, &corners);
         rotate_elements(&mut self.corner_orientations, &corners);
 
-        let centers : Vec<usize> = [Center::U, Center::L, Center::D, Center::R]
+        let centers: Vec<usize> = [Center::U, Center::L, Center::D, Center::R]
             .iter()
             .map(|x| Self::center_to_i(*x))
             .collect();
@@ -264,7 +266,7 @@ impl Skewb {
     }
 
     pub fn rotate_lr(&mut self) {
-        let corners : Vec<usize> = [(0, 0, 1), (1, 0, 1), (1, 0, 0), (0, 0, 0)]
+        let corners: Vec<usize> = [(0, 0, 1), (1, 0, 1), (1, 0, 0), (0, 0, 0)]
             .iter()
             .map(|x| Self::corner_to_i(*x))
             .collect();
@@ -272,7 +274,7 @@ impl Skewb {
         rotate_elements(&mut self.corner_pieces, &corners);
         rotate_elements(&mut self.corner_orientations, &corners);
 
-        let corners : Vec<usize> = [(0, 1, 1), (1, 1, 1), (1, 1, 0), (0, 1, 0)]
+        let corners: Vec<usize> = [(0, 1, 1), (1, 1, 1), (1, 1, 0), (0, 1, 0)]
             .iter()
             .map(|x| Self::corner_to_i(*x))
             .collect();
@@ -280,7 +282,7 @@ impl Skewb {
         rotate_elements(&mut self.corner_pieces, &corners);
         rotate_elements(&mut self.corner_orientations, &corners);
 
-        let centers : Vec<usize> = [Center::U, Center::F, Center::D, Center::B]
+        let centers: Vec<usize> = [Center::U, Center::F, Center::D, Center::B]
             .iter()
             .map(|x| Self::center_to_i(*x))
             .collect();
@@ -393,13 +395,14 @@ impl NormalizedSkewb {
             panic!("Can't turn a moving corner");
         };
 
-        let corners : Vec<usize> = [
+        let corners: Vec<usize> = [
             (c.0, c.1, 1 - c.2),
             (c.0, 1 - c.1, c.2),
             (1 - c.0, c.1, c.2),
-        ].iter()
-            .map(|x| Self::fixed_or_moving(*x).1)
-            .collect();
+        ]
+        .iter()
+        .map(|x| Self::fixed_or_moving(*x).1)
+        .collect();
 
         rotate_elements(&mut self.moving_pieces, &corners);
         rotate_elements(&mut self.moving_orientations, &corners);
@@ -410,13 +413,14 @@ impl NormalizedSkewb {
             *self.moving_orientations.get_mut(c).unwrap() += Orientation::LR;
         }
 
-        let centers : Vec<usize> = [
+        let centers: Vec<usize> = [
             if c.2 == 0 { Center::B } else { Center::F },
             if c.1 == 0 { Center::L } else { Center::R },
             if c.0 == 0 { Center::U } else { Center::D },
-        ].iter()
-            .map(|x| Self::center_to_i(*x))
-            .collect();
+        ]
+        .iter()
+        .map(|x| Self::center_to_i(*x))
+        .collect();
         rotate_elements(&mut self.center_pieces, &centers);
     }
     pub fn turn_fb(&mut self, c: Corner) {
@@ -483,23 +487,22 @@ impl NormalizedSkewb {
             Direction::LR => self.turn_lr(move_.corner),
         }
     }
-    pub fn undo_move(&mut self, move_: &Move){
+    pub fn undo_move(&mut self, move_: &Move) {
         match move_.direction {
             Direction::LR => self.turn_fb(move_.corner),
             Direction::FB => self.turn_lr(move_.corner),
         }
     }
 
-    pub fn is_solved(&self) -> bool {
-        *self == NormalizedSkewb::new()
-    }
+    pub fn is_solved(&self) -> bool { *self == NormalizedSkewb::new() }
 
     fn _solution(
         &mut self,
         move_stack: &mut Vec<Move>,
         discovered: &mut HashSet<NormalizedSkewb>,
         max_length: usize,
-    ) -> bool {
+    ) -> bool
+    {
         if self.is_solved() {
             return true;
         } else if move_stack.len() >= max_length || discovered.contains(self) {
@@ -515,7 +518,7 @@ impl NormalizedSkewb {
             }
 
             for direction in vec![Direction::FB, Direction::LR].into_iter() {
-                let move_ = Move { direction, corner};
+                let move_ = Move { direction, corner };
                 self.do_move(&move_);
                 move_stack.push(move_.clone());
                 let has_solution = self._solution(move_stack, discovered, max_length);
@@ -556,7 +559,13 @@ fn one_move_solution() {
     let mut sut = NormalizedSkewb::new();
     sut.turn_lr((0, 0, 0));
     let solution = sut.solution().unwrap();
-    assert_eq!(vec![Move { direction: Direction::FB, corner: (0, 0, 0)}], solution);
+    assert_eq!(
+        vec![Move {
+            direction: Direction::FB,
+            corner: (0, 0, 0)
+        }],
+        solution
+    );
 }
 
 #[test]
@@ -565,7 +574,10 @@ fn two_lefts_make_a_right() {
     sut.turn_lr((0, 0, 0));
     sut.turn_lr((0, 0, 0));
     let solution = sut.solution().unwrap();
-    let expected = vec![Move { direction: Direction::LR, corner: (0, 0, 0)}];
+    let expected = vec![Move {
+        direction: Direction::LR,
+        corner: (0, 0, 0),
+    }];
     assert_eq!(expected, solution);
 }
 
@@ -576,8 +588,14 @@ fn two_move_solution() {
     sut.turn_lr((1, 0, 1));
     let solution = sut.solution().unwrap();
     let expected = vec![
-        Move { direction: Direction::FB, corner: (1, 0, 1)},
-        Move { direction: Direction::FB, corner: (0, 0, 0)},
+        Move {
+            direction: Direction::FB,
+            corner: (1, 0, 1),
+        },
+        Move {
+            direction: Direction::FB,
+            corner: (0, 0, 0),
+        },
     ];
     assert_eq!(expected, solution);
 }
@@ -591,10 +609,22 @@ fn four_move_solution() {
     sut.turn_fb((1, 0, 1));
     let solution = sut.solution().unwrap();
     let expected = vec![
-        Move { direction: Direction::LR, corner: (1, 0, 1)},
-        Move { direction: Direction::LR, corner: (0, 0, 0)},
-        Move { direction: Direction::FB, corner: (1, 0, 1)},
-        Move { direction: Direction::FB, corner: (0, 0, 0)},
+        Move {
+            direction: Direction::LR,
+            corner: (1, 0, 1),
+        },
+        Move {
+            direction: Direction::LR,
+            corner: (0, 0, 0),
+        },
+        Move {
+            direction: Direction::FB,
+            corner: (1, 0, 1),
+        },
+        Move {
+            direction: Direction::FB,
+            corner: (0, 0, 0),
+        },
     ];
     assert_eq!(expected, solution);
 }
