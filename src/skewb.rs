@@ -298,13 +298,13 @@ impl Skewb {
         }
     }
 
-    fn i_to_moving_i(i: usize) -> usize {
+    fn i_to_floating_i(i: usize) -> usize {
         match i {
             1 => 0,
             3 => 1,
             4 => 2,
             6 => 3,
-            _ => panic!("Not a moving corner index!"),
+            _ => panic!("Not a floating corner index!"),
         }
     }
 
@@ -319,23 +319,23 @@ impl Skewb {
             self.corner_orientations[5],
             self.corner_orientations[7],
         ];
-        let moving_orientations = [
+        let floating_orientations = [
             self.corner_orientations[1],
             self.corner_orientations[3],
             self.corner_orientations[4],
             self.corner_orientations[6],
         ];
-        let moving_pieces = [
-            Self::i_to_moving_i(self.corner_pieces[1]),
-            Self::i_to_moving_i(self.corner_pieces[3]),
-            Self::i_to_moving_i(self.corner_pieces[4]),
-            Self::i_to_moving_i(self.corner_pieces[6]),
+        let floating_pieces = [
+            Self::i_to_floating_i(self.corner_pieces[1]),
+            Self::i_to_floating_i(self.corner_pieces[3]),
+            Self::i_to_floating_i(self.corner_pieces[4]),
+            Self::i_to_floating_i(self.corner_pieces[6]),
         ];
         NormalizedSkewb {
             center_pieces: self.center_pieces,
             fixed_orientations,
-            moving_orientations,
-            moving_pieces,
+            floating_orientations,
+            floating_pieces,
         }
     }
 }
@@ -343,37 +343,37 @@ impl Skewb {
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct NormalizedSkewb {
     pub fixed_orientations: [Orientation; 4],
-    pub moving_pieces: [usize; 4],
-    pub moving_orientations: [Orientation; 4],
+    pub floating_pieces: [usize; 4],
+    pub floating_orientations: [Orientation; 4],
     pub center_pieces: [Color; 6],
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-enum FixedOrMoving {
+enum FixedOrFloating {
     Fixed,
-    Moving,
+    Floating,
 }
 
 impl NormalizedSkewb {
     pub fn new() -> NormalizedSkewb {
         NormalizedSkewb {
             fixed_orientations: [Orientation::UD; 4],
-            moving_pieces: [0, 1, 2, 3],
-            moving_orientations: [Orientation::UD; 4],
+            floating_pieces: [0, 1, 2, 3],
+            floating_orientations: [Orientation::UD; 4],
             center_pieces: [Color::Y, Color::B, Color::R, Color::G, Color::O, Color::W],
         }
     }
 
-    fn fixed_or_moving(c: Corner) -> (FixedOrMoving, usize) {
+    fn fixed_or_floating(c: Corner) -> (FixedOrFloating, usize) {
         match c {
-            (0, 0, 0) => (FixedOrMoving::Fixed, 0),
-            (0, 0, 1) => (FixedOrMoving::Moving, 0),
-            (0, 1, 1) => (FixedOrMoving::Fixed, 1),
-            (0, 1, 0) => (FixedOrMoving::Moving, 1),
-            (1, 0, 0) => (FixedOrMoving::Moving, 2),
-            (1, 0, 1) => (FixedOrMoving::Fixed, 2),
-            (1, 1, 1) => (FixedOrMoving::Moving, 3),
-            (1, 1, 0) => (FixedOrMoving::Fixed, 3),
+            (0, 0, 0) => (FixedOrFloating::Fixed, 0),
+            (0, 0, 1) => (FixedOrFloating::Floating, 0),
+            (0, 1, 1) => (FixedOrFloating::Fixed, 1),
+            (0, 1, 0) => (FixedOrFloating::Floating, 1),
+            (1, 0, 0) => (FixedOrFloating::Floating, 2),
+            (1, 0, 1) => (FixedOrFloating::Fixed, 2),
+            (1, 1, 1) => (FixedOrFloating::Floating, 3),
+            (1, 1, 0) => (FixedOrFloating::Fixed, 3),
             x => panic!(format!("{:?} not a corner", x)),
         }
     }
@@ -389,10 +389,10 @@ impl NormalizedSkewb {
     }
 
     pub fn turn_lr(&mut self, c: Corner) {
-        let i = if let (FixedOrMoving::Fixed, i) = Self::fixed_or_moving(c) {
+        let i = if let (FixedOrFloating::Fixed, i) = Self::fixed_or_floating(c) {
             i
         } else {
-            panic!("Can't turn a moving corner");
+            panic!("Can't turn a floating corner");
         };
 
         let corners: Vec<usize> = [
@@ -401,16 +401,16 @@ impl NormalizedSkewb {
             (1 - c.0, c.1, c.2),
         ]
         .iter()
-        .map(|x| Self::fixed_or_moving(*x).1)
+        .map(|x| Self::fixed_or_floating(*x).1)
         .collect();
 
-        rotate_elements(&mut self.moving_pieces, &corners);
-        rotate_elements(&mut self.moving_orientations, &corners);
+        rotate_elements(&mut self.floating_pieces, &corners);
+        rotate_elements(&mut self.floating_orientations, &corners);
 
         *self.fixed_orientations.get_mut(i).unwrap() += Orientation::LR;
 
         for &c in corners.iter() {
-            *self.moving_orientations.get_mut(c).unwrap() += Orientation::LR;
+            *self.floating_orientations.get_mut(c).unwrap() += Orientation::LR;
         }
 
         let centers: Vec<usize> = [
@@ -428,35 +428,35 @@ impl NormalizedSkewb {
         self.turn_lr(c);
     }
 
-    fn moving_i_to_i(i: usize) -> usize {
+    fn floating_i_to_i(i: usize) -> usize {
         match i {
             0 => 1,
             1 => 3,
             2 => 4,
             3 => 6,
-            _ => panic!("Not a moving corner index!"),
+            _ => panic!("Not a floating corner index!"),
         }
     }
 
     pub fn denormalize(self) -> Skewb {
         let corner_pieces = [
             0,
-            Self::moving_i_to_i(self.moving_pieces[0]),
+            Self::floating_i_to_i(self.floating_pieces[0]),
             2,
-            Self::moving_i_to_i(self.moving_pieces[1]),
-            Self::moving_i_to_i(self.moving_pieces[2]),
+            Self::floating_i_to_i(self.floating_pieces[1]),
+            Self::floating_i_to_i(self.floating_pieces[2]),
             5,
-            Self::moving_i_to_i(self.moving_pieces[3]),
+            Self::floating_i_to_i(self.floating_pieces[3]),
             7,
         ];
         let corner_orientations = [
             self.fixed_orientations[0],
-            self.moving_orientations[0],
+            self.floating_orientations[0],
             self.fixed_orientations[1],
-            self.moving_orientations[1],
-            self.moving_orientations[2],
+            self.floating_orientations[1],
+            self.floating_orientations[2],
             self.fixed_orientations[2],
-            self.moving_orientations[3],
+            self.floating_orientations[3],
             self.fixed_orientations[3],
         ];
         Skewb {

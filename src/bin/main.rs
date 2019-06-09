@@ -27,13 +27,13 @@ fn main() {
             Orientation::FB,
             Orientation::FB,
         ],
-        moving_orientations: [
+        floating_orientations: [
             Orientation::LR,
             Orientation::LR,
             Orientation::UD,
             Orientation::LR,
         ],
-        moving_pieces: [1, 3, 2, 0],
+        floating_pieces: [1, 3, 2, 0],
     };
 
     // Solve it!
