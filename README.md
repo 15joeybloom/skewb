@@ -1,7 +1,8 @@
 Skewb
 =====
 
-Code for drawing, manipulating, and finding the shortest solution for a skewb.
+Code for drawing, manipulating, and finding the shortest solution for a
+[skewb](https://en.wikipedia.org/wiki/Skewb).
 
 Terminology
 -----------
