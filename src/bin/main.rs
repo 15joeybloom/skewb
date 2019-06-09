@@ -2,6 +2,7 @@ extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
 extern crate piston;
+extern crate skewb;
 
 use glutin_window::GlutinWindow;
 use opengl_graphics::{GlGraphics, OpenGL};
@@ -11,15 +12,10 @@ use piston::window::WindowSettings;
 
 use graphics::Graphics;
 
-mod drawer;
-mod skewb;
-mod unordered_pair;
-
-use drawer::Drawer;
-use skewb::Color;
-use skewb::NormalizedSkewb;
-use skewb::Orientation;
-use skewb::Skewb;
+use skewb::drawer::Drawer;
+use skewb::skewb::Color;
+use skewb::skewb::NormalizedSkewb;
+use skewb::skewb::Orientation;
 
 fn main() {
     let opengl = OpenGL::V3_2;
@@ -55,22 +51,6 @@ fn main() {
             println!("{:?}", move_);
         }
     }
-    /*
-    Move { direction: FB, corner: (1, 1, 0) }
-    Move { direction: LR, corner: (0, 0, 0) }
-    Move { direction: LR, corner: (1, 0, 1) }
-    Move { direction: LR, corner: (0, 0, 0) }
-    Move { direction: FB, corner: (0, 1, 1) }
-    Move { direction: LR, corner: (1, 1, 0) }
-    Move { direction: LR, corner: (0, 0, 0) }
-    Move { direction: LR, corner: (1, 1, 0) }
-     */
-
-    let solved = Skewb::new();
-    let mut normalized = solved.normalize();
-    normalized.turn_fb((0, 1, 1));
-    normalized.turn_lr((1, 0, 1));
-    let denormalized = normalized.denormalize();
 
     let draw_me = scrambled.denormalize();
 
